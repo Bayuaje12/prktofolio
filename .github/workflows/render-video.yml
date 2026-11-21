@@ -27,7 +27,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
           cache: "npm"
 
       - name: Install system dependencies
@@ -44,6 +44,12 @@ jobs:
       - name: Install Remotion browser
         run: npx remotion browser ensure
 
+      - name: Verify Remotion browser
+        run: |
+          echo "Remotion browser ensure completed"
+          npx remotion --version
+          node -e "console.log('GITHUB_ACTIONS=', process.env.GITHUB_ACTIONS)"
+
       - name: Render vertical
         if: ${{ inputs.composition == 'all' || inputs.composition == 'BayuPortfolioVertical' }}
         run: |
@@ -56,15 +62,21 @@ jobs:
           mkdir -p out
           npx remotion render src/index.ts BayuPortfolioHorizontal out/bayu-portfolio-horizontal.mp4 --codec=h264 --crf=18 --image-format=jpeg --concurrency=2
 
-      - name: QC
+      - name: QC MP4
         run: |
           set -e
+          found=0
           for f in out/*.mp4; do
             [ -f "$f" ] || continue
+            found=1
             echo "==> $f"
             ls -lh "$f"
             ffprobe -v error -show_entries format=duration,size,bit_rate -show_entries stream=codec_name,width,height,r_frame_rate -of default=noprint_wrappers=1 "$f"
           done
+          if [ "$found" -eq 0 ]; then
+            echo "No MP4 files found in out/"
+            exit 1
+          fi
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
