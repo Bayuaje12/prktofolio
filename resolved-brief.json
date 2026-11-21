@@ -1,0 +1,26 @@
+{
+  "project": "BAYU Motion Graphics Portfolio",
+  "workspace": "/data/data/com.termux/files/home/prktofolio",
+  "decisions": {
+    "referenceVideo": {
+      "status": "not-found-in-workspace",
+      "action": "User said use previously uploaded reference; placeholder reference folder created at public/assets/reference/"
+    },
+    "profilePhoto": "placeholder at public/assets/profile/profile-placeholder.svg",
+    "projects": "6 placeholder projects in src/data/content.ts with dummy thumbnails in public/assets/projects/",
+    "socials": "generic placeholders only; no fake personal accounts invented",
+    "logo": "typography wordmark generated from CONTENT.personal.logoWordmark (IBOYY CREATIVE)",
+    "skills": ["HTML", "CSS", "JavaScript", "React", "TypeScript", "Node.js", "GitHub", "UI/UX Design"],
+    "music": "placeholder WAV + procedural SFX placeholders in public/assets/audio/"
+  },
+  "deliverables": {
+    "sourceCode": "full Remotion project",
+    "verticalRender": "out/bayu-portfolio-vertical.mp4",
+    "horizontalRender": "out/bayu-portfolio-horizontal.mp4",
+    "qc": "scripts/qc.sh"
+  },
+  "notes": [
+    "Do not claim render success before MP4 exists and QC passes.",
+    "Replace placeholders via src/data/content.ts and public/assets/."
+  ]
+}

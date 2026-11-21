@@ -1,0 +1,33 @@
+{
+  "name": "bayu-motion-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "remotion studio src/index.ts",
+    "preview": "remotion studio src/index.ts",
+    "render:vertical": "remotion render src/index.ts BayuPortfolioVertical out/bayu-portfolio-vertical.mp4 --codec=h264 --crf=18 --image-format=jpeg",
+    "render:horizontal": "remotion render src/index.ts BayuPortfolioHorizontal out/bayu-portfolio-horizontal.mp4 --codec=h264 --crf=18 --image-format=jpeg",
+    "render:all": "npm run render:vertical && npm run render:horizontal",
+    "render:still": "remotion still src/index.ts BayuPortfolioVertical out/poster.png --frame=120",
+    "qc": "bash scripts/qc.sh",
+    "build": "npm run render:vertical",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.200",
+    "@remotion/google-fonts": "4.0.200",
+    "@remotion/media-utils": "4.0.200",
+    "@remotion/transitions": "4.0.200",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "remotion": "4.0.200",
+    "zod": "3.22.3"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "typescript": "^5.9.3",
+    "@types/node": "^22.10.1"
+  }
+}
