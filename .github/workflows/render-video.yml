@@ -47,8 +47,8 @@ jobs:
       - name: Verify Remotion browser
         run: |
           echo "Remotion browser ensure completed"
-          npx remotion --version
           node -e "console.log('GITHUB_ACTIONS=', process.env.GITHUB_ACTIONS)"
+          node -e "console.log('node=', process.version)"
 
       - name: Render vertical
         if: ${{ inputs.composition == 'all' || inputs.composition == 'BayuPortfolioVertical' }}
