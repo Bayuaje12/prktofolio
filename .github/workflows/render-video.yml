@@ -1,0 +1,75 @@
+name: Render Portfolio Video
+
+on:
+  workflow_dispatch:
+    inputs:
+      composition:
+        description: "Composition to render (BayuPortfolioVertical, BayuPortfolioHorizontal, or all)"
+        required: false
+        default: "all"
+        type: choice
+        options:
+          - all
+          - BayuPortfolioVertical
+          - BayuPortfolioHorizontal
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg \
+            libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 \
+            libxkbcommon0 libxcomposite1 libxdamage1 libxrandr2 libgbm1 \
+            libpango-1.0-0 libcairo2 libasound2t64 libxshmfence1
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Remotion browser
+        run: npx remotion browser ensure
+
+      - name: Render vertical
+        if: ${{ inputs.composition == 'all' || inputs.composition == 'BayuPortfolioVertical' }}
+        run: |
+          mkdir -p out
+          npx remotion render src/index.ts BayuPortfolioVertical out/bayu-portfolio-vertical.mp4 --codec=h264 --crf=18 --image-format=jpeg --concurrency=2
+
+      - name: Render horizontal
+        if: ${{ inputs.composition == 'all' || inputs.composition == 'BayuPortfolioHorizontal' }}
+        run: |
+          mkdir -p out
+          npx remotion render src/index.ts BayuPortfolioHorizontal out/bayu-portfolio-horizontal.mp4 --codec=h264 --crf=18 --image-format=jpeg --concurrency=2
+
+      - name: QC
+        run: |
+          set -e
+          for f in out/*.mp4; do
+            [ -f "$f" ] || continue
+            echo "==> $f"
+            ls -lh "$f"
+            ffprobe -v error -show_entries format=duration,size,bit_rate -show_entries stream=codec_name,width,height,r_frame_rate -of default=noprint_wrappers=1 "$f"
+          done
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bayu-portfolio-videos
+          path: out/*.mp4
+          if-no-files-found: error
+          retention-days: 14
